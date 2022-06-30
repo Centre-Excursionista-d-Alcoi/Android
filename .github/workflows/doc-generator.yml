@@ -1,0 +1,52 @@
+name: Docs Generator
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code 🛎️
+        uses: actions/checkout@v3
+        with:
+          submodules: false
+          fetch-depth: 0
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Prepare secure files 🔒
+        run: |
+          echo 'SIGNING_KEYSTORE_PASSWORD=${{ secrets.SIGNING_KEYSTORE_PASSWORD }}' >> local.properties
+          echo 'SIGNING_KEY_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}' >> local.properties
+          echo 'SIGNING_KEY_PASSWORD=${{ secrets.SIGNING_KEYSTORE_PASSWORD }}' >> local.properties
+
+          truncate -s 0 app/version.gradle
+          echo "ext {" >> app/version.gradle
+          echo "VERSION_NAME=\"${{ steps.create_release.outputs.tag_name }}\"" >> app/version.gradle
+          echo "}" >> app/version.gradle
+
+          echo '${{ secrets.GOOGLE_SERVICES }}' >> app/google-services.json
+      - name: Run dokka 📝
+        id: test
+        run: |
+          yes | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;33.0.0"
+          bash ./gradlew dokkaHtmlMultiModule
+      - name: Add redirect 🔁
+        id: redirection
+        run: |
+          touch index.html
+          echo '<html><head><meta http-equiv="refresh" content="0; URL=https://cea-android.github.io/Android/html/index.html" /></head><body><p>Redirecting...</p></body></html>' > index.html
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.3.4
+        with:
+          BRANCH: gh-pages
+          FOLDER: build/dokka/
