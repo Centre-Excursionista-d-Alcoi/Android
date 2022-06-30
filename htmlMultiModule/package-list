@@ -3,4 +3,6 @@ $dokka.linkExtension:html
 
 module:app
 com.arnyminerz.cea.app
+com.arnyminerz.cea.app.ui.data
+com.arnyminerz.cea.app.ui.screen
 com.arnyminerz.cea.app.ui.theme
