@@ -1,0 +1,21 @@
+formatting:
+  active: true
+  android: true
+  autoCorrect: true
+  MultiLineIfElse:
+    active: false
+
+complexity:
+  LongMethod:
+    active: false
+  TooManyFunctions:
+    active: false
+
+empty-blocks:
+  EmptyFunctionBlock:
+    active: true
+    ignoreOverridden: true
+
+style:
+  ThrowsCount:
+    active: false
