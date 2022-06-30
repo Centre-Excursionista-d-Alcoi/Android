@@ -153,8 +153,8 @@ dependencies {
     // Accompanist
     implementation "com.google.accompanist:accompanist-pager:0.24.13-rc"
 
-    // Volley
-    implementation 'com.android.volley:volley:1.2.1'
+    // RSS Parser
+    implementation 'com.prof18.rssparser:rssparser:4.0.2'
 
     // Timber logger
     implementation 'com.jakewharton.timber:timber:5.0.1'
