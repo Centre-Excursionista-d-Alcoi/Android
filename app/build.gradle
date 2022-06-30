@@ -1,18 +1,25 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id('com.android.application')
+    id('kotlin-android')
+    id('com.google.gms.google-services')
+    id('com.google.firebase.crashlytics')
+    id('com.google.firebase.firebase-perf')
+    id('org.jetbrains.dokka')
+    id('com.google.android.secrets-gradle-plugin') version '1.1.0'
 }
+
+apply from: './version.gradle'
 
 android {
     namespace 'com.arnyminerz.cea.app'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.arnyminerz.cea.app"
         minSdk 21
-        targetSdk 32
-        versionCode 1
-        versionName "1.0"
+        targetSdk 33
+        versionCode findProperty("android.versionCode") as Integer
+        versionName VERSION_NAME
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -20,10 +27,45 @@ android {
         }
     }
 
+    // Configures the APK and AAB signing config
+    signingConfigs {
+        release {
+            def props = new Properties()
+            file("${rootDir}/local.properties").withInputStream { props.load(it) }
+
+            storeFile file("keystore.jks")
+            storePassword props.getProperty("SIGNING_KEYSTORE_PASSWORD")
+            keyAlias props.getProperty("SIGNING_KEY_ALIAS")
+            keyPassword props.getProperty("SIGNING_KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            // Change the file name
+            setProperty("archivesBaseName", "CEA-Android-${android.defaultConfig.versionCode}-${android.defaultConfig.versionName}")
+            // Set the signing keys
+            signingConfig signingConfigs.release
+            // Enable minifying
+            minifyEnabled true
+
+            // Set the debug symbol level
+            ndk.debugSymbolLevel = 'FULL'
+        }
+        debug {
+            // Add the date as a suffix to the version name
+            versionNameSuffix "-debug-build" + getDate()
+            // Rename the output file
+            setProperty("archivesBaseName", "CEA-Android")
+
+            // Disable mapping file upload for Crashlytics
+            firebaseCrashlytics {
+                mappingFileUploadEnabled false
+            }
+
+            minifyEnabled false
         }
     }
     compileOptions {
@@ -32,12 +74,17 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs += [
+                '-Xjvm-default=all',
+                // Allow experimental
+                '-opt-in=kotlin.RequiresOptIn'
+        ]
     }
     buildFeatures {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.1.1'
+        kotlinCompilerExtensionVersion compose_version
     }
     packagingOptions {
         resources {
@@ -46,14 +93,56 @@ android {
     }
 }
 
-dependencies {
+tasks.named("dokkaHtmlPartial") {
+    dokkaSourceSets {
+        configureEach {
+            noAndroidSdkLink.set(false)
+        }
+    }
+}
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
-    implementation 'androidx.activity:activity-compose:1.3.1'
+android.applicationVariants.all { variant ->
+    if (variant.buildType.name == "release") {
+        variant.assemble.doLast {
+            // This increases version code on release
+            def versionPropsFile = file("../gradle.properties")
+            Properties versionProps = new Properties()
+            versionProps.load(new FileInputStream(versionPropsFile))
+            def code = versionProps['android.versionCode'].toInteger() + 1
+            versionProps['android.versionCode'] = code.toString()
+            versionProps.store(versionPropsFile.newWriter(), null)
+            logger.lifecycle("Increased version code to $code")
+        }
+    }
+}
+
+secrets {
+    propertiesFileName 'local.properties'
+
+    ignoreList.add("SIGNING_KEYSTORE_PASSWORD")
+    ignoreList.add("SIGNING_KEY_ALIAS")
+    ignoreList.add("SIGNING_KEY_PASSWORD")
+}
+
+static def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmmss')
+    return formattedDate
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0'
+    implementation 'androidx.activity:activity-compose:1.5.0'
+
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation 'androidx.compose.material3:material3:1.0.0-alpha02'
+    implementation 'androidx.compose.material3:material3:1.0.0-alpha14'
+
+    // Firebase libraries
+    implementation platform('com.google.firebase:firebase-bom:30.2.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
