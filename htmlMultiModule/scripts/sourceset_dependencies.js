@@ -1,0 +1,1 @@
+sourceset_dependencies = '{":app:dokkaHtmlPartial/androidTestRelease":[],":app:dokkaHtmlPartial/debug":[],":app:dokkaHtmlPartial/main":[],":app:dokkaHtmlPartial/release":[],":app:dokkaHtmlPartial/testFixtures":[],":app:dokkaHtmlPartial/testFixturesDebug":[],":app:dokkaHtmlPartial/testFixturesRelease":[]}'
