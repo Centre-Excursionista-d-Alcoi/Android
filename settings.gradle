@@ -7,3 +7,4 @@ pluginManagement {
 
 rootProject.name = "CEA App"
 include ':app'
+include ':libs:app_intro'
