@@ -221,7 +221,8 @@ class MainActivity : ComponentActivity() {
                         }
                     )
 
-                    newsViewModel.loadNews()
+                    if (news == null)
+                        newsViewModel.loadNews()
                 }
             }
         }
