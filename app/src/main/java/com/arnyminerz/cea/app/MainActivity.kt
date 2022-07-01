@@ -1,11 +1,15 @@
 package com.arnyminerz.cea.app
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -13,11 +17,13 @@ import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Newspaper
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.EditNote
 import androidx.compose.material.icons.rounded.Newspaper
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -30,7 +36,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.arnyminerz.cea.app.activity.RentingActivity
 import com.arnyminerz.cea.app.ui.data.NavItem
 import com.arnyminerz.cea.app.ui.elements.NewsItem
 import com.arnyminerz.cea.app.ui.screen.AuthScreen
@@ -51,7 +61,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
 
@@ -61,7 +71,13 @@ class MainActivity : ComponentActivity() {
 
     private val newsViewModel by viewModels<NewsViewModel> { NewsViewModel.Factory(application) }
 
-    private val contract = registerForActivityResult(
+    private val rentContract = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+
+    }
+
+    private val loginContract = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
         try {
@@ -126,7 +142,7 @@ class MainActivity : ComponentActivity() {
                     AuthScreen {
                         oneTapClient.beginSignIn(signInRequest)
                             .addOnSuccessListener { result ->
-                                contract.launch(
+                                loginContract.launch(
                                     IntentSenderRequest
                                         .Builder(result.pendingIntent.intentSender)
                                         .build()
@@ -215,7 +231,30 @@ class MainActivity : ComponentActivity() {
                                                 NewsItem(article)
                                             }
                                         }
-                                else
+                                else if (page == 1) {
+                                    Box(
+                                        modifier = Modifier.fillMaxSize()
+                                    ) {
+                                        FloatingActionButton(
+                                            onClick = {
+                                                rentContract.launch(
+                                                    Intent(
+                                                        this@MainActivity,
+                                                        RentingActivity::class.java
+                                                    )
+                                                )
+                                            },
+                                            modifier = Modifier
+                                                .padding(8.dp)
+                                                .align(Alignment.BottomEnd),
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Add,
+                                                contentDescription = "", // TODO: Localize
+                                            )
+                                        }
+                                    }
+                                } else
                                     Text("Page: $page")
                             }
                         }
