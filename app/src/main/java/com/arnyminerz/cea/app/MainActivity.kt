@@ -41,8 +41,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.arnyminerz.cea.app.activity.RentingActivity
+import com.arnyminerz.cea.app.data.InventoryItem
+import com.arnyminerz.cea.app.data.RentingData
 import com.arnyminerz.cea.app.ui.data.NavItem
 import com.arnyminerz.cea.app.ui.elements.NewsItem
+import com.arnyminerz.cea.app.ui.elements.RentItem
 import com.arnyminerz.cea.app.ui.screen.AuthScreen
 import com.arnyminerz.cea.app.ui.theme.CEAAppTheme
 import com.arnyminerz.cea.app.viewmodel.NewsViewModel
@@ -53,10 +56,13 @@ import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -66,6 +72,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var signInRequest: BeginSignInRequest
 
     private val auth: FirebaseAuth = Firebase.auth
+    private val db: FirebaseFirestore = Firebase.firestore
 
     private val firebaseUser = mutableStateOf<FirebaseUser?>(null)
 
@@ -253,6 +260,81 @@ class MainActivity : AppCompatActivity() {
                                                 contentDescription = "", // TODO: Localize
                                             )
                                         }
+
+                                        var rentItems by remember {
+                                            mutableStateOf<List<RentingData>>(
+                                                emptyList()
+                                            )
+                                        }
+
+                                        LazyColumn(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                        ) {
+                                            items(rentItems) { i ->
+                                                RentItem(i)
+                                            }
+                                        }
+
+                                        db.collection("users")
+                                            .document(user!!.uid)
+                                            .get()
+                                            .addOnSuccessListener { userDocument ->
+                                                rentItems = emptyList()
+
+                                                val renting =
+                                                    userDocument.get("renting") as Map<*, *>
+                                                for ((catKey, date) in renting) {
+                                                    catKey as String
+                                                    date as Timestamp
+                                                    val (category, itemIndex) = catKey
+                                                        .split("/")
+                                                        .let { it[0] to it[1].toInt() }
+                                                    db.collection("inventory")
+                                                        .document(category)
+                                                        .get()
+                                                        .addOnSuccessListener { document ->
+                                                            val displayName =
+                                                                document.getString("displayName")!!
+                                                            val items =
+                                                                document.get("items") as ArrayList<*>
+                                                            val item = items[itemIndex] as Map<*, *>
+                                                            val amount = item["amount"] as Long
+                                                            val name = item["name"] as String
+                                                            val description =
+                                                                item["description"] as String
+                                                            val type = item["type"] as String
+
+                                                            rentItems = rentItems
+                                                                .toMutableList()
+                                                                .apply {
+                                                                    add(
+                                                                        RentingData(
+                                                                            displayName,
+                                                                            InventoryItem(
+                                                                                amount.toUInt(),
+                                                                                name,
+                                                                                description,
+                                                                                type,
+                                                                            ),
+                                                                            date.toDate(),
+                                                                            // TODO: Amount should be computed by awaiting the inventory contents load, so it can be synchronized with
+                                                                            // the greater for, and start counting repetitions of the same renting
+                                                                            1U,
+                                                                        )
+                                                                    )
+                                                                }
+                                                        }
+                                                        .addOnFailureListener { e ->
+                                                            // TODO: Notify the user
+                                                            Timber.e(e, "Could not get inventory.")
+                                                        }
+                                                }
+                                            }
+                                            .addOnFailureListener { e ->
+                                                // TODO: Notify the user
+                                                Timber.e(e, "Could not get inventory.")
+                                            }
                                     }
                                 } else
                                     Text("Page: $page")
