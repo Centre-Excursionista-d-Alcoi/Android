@@ -5,6 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Newspaper
@@ -29,8 +32,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.res.stringResource
 import com.arnyminerz.cea.app.ui.data.NavItem
+import com.arnyminerz.cea.app.ui.elements.NewsItem
 import com.arnyminerz.cea.app.ui.screen.AuthScreen
 import com.arnyminerz.cea.app.ui.theme.CEAAppTheme
+import com.arnyminerz.cea.app.viewmodel.NewsViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -53,6 +58,8 @@ class MainActivity : ComponentActivity() {
     private val auth: FirebaseAuth = Firebase.auth
 
     private val firebaseUser = mutableStateOf<FirebaseUser?>(null)
+
+    private val newsViewModel by viewModels<NewsViewModel> { NewsViewModel.Factory(application) }
 
     private val contract = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
@@ -131,6 +138,7 @@ class MainActivity : ComponentActivity() {
                     }
                 else {
                     var selectedItem by remember { mutableStateOf(0) }
+                    val news by newsViewModel.news
 
                     val scope = rememberCoroutineScope()
                     val pagerState = rememberPagerState(selectedItem)
@@ -198,10 +206,22 @@ class MainActivity : ComponentActivity() {
                                 state = pagerState,
                                 contentPadding = paddingValues,
                             ) { page ->
-                                Text("Page: $page")
+                                if (page == 0)
+                                    if (news == null)
+                                        Text("loading...")
+                                    else
+                                        LazyColumn {
+                                            items(news ?: emptyList()) { article ->
+                                                NewsItem(article)
+                                            }
+                                        }
+                                else
+                                    Text("Page: $page")
                             }
                         }
                     )
+
+                    newsViewModel.loadNews()
                 }
             }
         }
