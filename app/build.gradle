@@ -147,6 +147,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-perf-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
 
+    // Coil image loader
+    def coil_version = "2.1.0"
+    implementation "io.coil-kt:coil:$coil_version"
+    implementation "io.coil-kt:coil-compose:$coil_version"
+
     // Google Play Services
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
 
