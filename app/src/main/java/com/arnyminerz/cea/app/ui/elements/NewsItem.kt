@@ -20,13 +20,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import coil.size.Scale
+import coil.size.Size
+import coil.size.SizeResolver
 import com.arnyminerz.cea.app.utils.launchUrl
+import com.arnyminerz.cea.app.utils.toPx
 import com.prof.rssparser.Article
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -37,6 +40,7 @@ fun NewsItem(
     article: Article
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
 
     Card(
         modifier = Modifier
@@ -53,7 +57,14 @@ fun NewsItem(
                 model = ImageRequest.Builder(context)
                     .data(article.image)
                     .crossfade(true)
-                    .scale(Scale.FIT)
+                    .size(
+                        SizeResolver(
+                            Size(
+                                configuration.screenWidthDp.toPx.toInt(),
+                                200.dp.toPx.toInt(),
+                            )
+                        )
+                    )
                     .build(),
                 contentDescription = "", // TODO: Localize
                 modifier = Modifier
