@@ -3,6 +3,11 @@ $dokka.linkExtension:html
 
 module:app
 com.arnyminerz.cea.app
+com.arnyminerz.cea.app.activity
+com.arnyminerz.cea.app.data
 com.arnyminerz.cea.app.ui.data
+com.arnyminerz.cea.app.ui.elements
 com.arnyminerz.cea.app.ui.screen
 com.arnyminerz.cea.app.ui.theme
+com.arnyminerz.cea.app.utils
+com.arnyminerz.cea.app.viewmodel
