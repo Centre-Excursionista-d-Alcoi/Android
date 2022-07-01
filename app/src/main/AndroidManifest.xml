@@ -28,6 +28,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activity.RentingActivity"
+            android:exported="true" />
+
         <!-- For selecting custom language -->
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
