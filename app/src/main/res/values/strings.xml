@@ -6,6 +6,8 @@
     <string name="language_label">Language</string>
 
     <string name="image_desc_language">Language</string>
+    <string name="image_desc_app_icon">App Icon</string>
+    <string name="image_desc_google_logo">Google Logo</string>
 
     <string name="main_menu_news">News</string>
     <string name="main_menu_rental">Rental</string>
