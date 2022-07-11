@@ -13,6 +13,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -57,9 +59,11 @@ fun AuthScreen(onLoginRequest: () -> Unit) {
                 Icon(
                     Icons.Rounded.Language,
                     contentDescription = stringResource(R.string.image_desc_language),
+                    tint = MaterialTheme.colorScheme.onBackground,
                 )
                 Text(
                     stringResource(R.string.language_label),
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
             }
             DropdownMenu(
@@ -74,6 +78,9 @@ fun AuthScreen(onLoginRequest: () -> Unit) {
                     text = {
                         Text("English")
                     },
+                    colors = MenuDefaults.itemColors(
+                        textColor = MaterialTheme.colorScheme.onBackground,
+                    )
                 )
             }
         }
