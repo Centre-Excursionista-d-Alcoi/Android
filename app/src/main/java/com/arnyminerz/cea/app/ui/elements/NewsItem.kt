@@ -87,7 +87,7 @@ fun NewsItem(
             ) {
                 val pubDate = article.pubDate
                 if (pubDate != null) {
-                    val date = SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z", Locale.getDefault())
+                    val date = SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
                         .parse(pubDate)
                     if (date != null) {
                         Icon(
