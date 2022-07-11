@@ -1,11 +1,15 @@
 package com.arnyminerz.cea.app.ui.screen
 
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Language
@@ -23,9 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
+import coil.compose.AsyncImage
 import com.arnyminerz.cea.app.R
 
 @Composable
@@ -36,12 +42,39 @@ fun AuthScreen(onLoginRequest: () -> Unit) {
     ) {
         var expanded by remember { mutableStateOf(false) }
 
-        Button(
-            onClick = onLoginRequest,
+        Column(
             modifier = Modifier
-                .align(Alignment.Center),
+                .align(Alignment.Center)
+                .width(128.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text("Login")
+            AsyncImage(
+                R.mipmap.ic_launcher,
+                contentDescription = stringResource(R.string.image_desc_app_icon),
+                modifier = Modifier
+                    .fillMaxWidth(.7f)
+                    .padding(bottom = 32.dp),
+            )
+
+            Button(
+                onClick = onLoginRequest,
+                modifier = Modifier
+                    .fillMaxWidth(),
+            ) {
+                Image(
+                    painter = painterResource(
+                        com.google.firebase.firestore.R.drawable.googleg_standard_color_18
+                    ),
+                    contentDescription = stringResource(R.string.image_desc_google_logo)
+                )
+                Text(
+                    // TODO: Localize message
+                    "Login",
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 12.dp),
+                )
+            }
         }
 
         // Language picker
