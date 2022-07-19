@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.CEAApp" parent="Theme.Material3.DayNight.NoActionBar" />
-
     <style name="CalendarViewCustom" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
-        <item name="colorAccent">@color/purple_200</item>
+        <item name="colorAccent">@color/purple_500</item>
         <item name="colorOnPrimary">@color/purple_700</item>
-        <item name="colorSurface">@color/teal_200</item>
+        <item name="colorSurface">@color/teal_700</item>
     </style>
 </resources>
