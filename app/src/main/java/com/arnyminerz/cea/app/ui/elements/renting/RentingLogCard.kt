@@ -1,5 +1,7 @@
 package com.arnyminerz.cea.app.ui.elements.renting
 
+import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,12 +17,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arnyminerz.cea.app.R
+import com.arnyminerz.cea.app.activity.ReturnActivity
 import com.arnyminerz.cea.app.annotation.ATTR_BRAND
 import com.arnyminerz.cea.app.annotation.ATTR_COLOR
 import com.arnyminerz.cea.app.annotation.ATTR_LENGTH
@@ -32,7 +36,9 @@ import com.arnyminerz.cea.app.utils.format
 @ExperimentalMaterial3Api
 fun ItemCard(
     rentingData: RentingData,
+    returnContract: ActivityResultLauncher<Intent>,
 ) {
+    val context = LocalContext.current
     val item = rentingData.item
 
     androidx.compose.material3.Card(
@@ -103,7 +109,14 @@ fun ItemCard(
                     .padding(top = 4.dp),
             ) {
                 OutlinedButton(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        returnContract.launch(
+                            ReturnActivity.intent(
+                                context,
+                                rentingData
+                            )
+                        )
+                    },
                     modifier = Modifier.weight(1f),
                 ) {
                     Icon(

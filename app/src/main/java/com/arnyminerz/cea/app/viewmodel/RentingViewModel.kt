@@ -74,10 +74,15 @@ class RentingViewModel(application: Application) : AndroidViewModel(application)
     fun rent(
         items: List<RentingData>,
         @UiThread onRentFinished: (documents: List<DocumentReference>) -> Unit
-    ) =
+    ) = viewModelScope.launch {
+        val documents = io { renting.rent(items) }
+        ui { onRentFinished(documents) }
+    }
+
+    fun returnRent(rentingData: RentingData, @UiThread onReturned: () -> Unit) =
         viewModelScope.launch {
-            val documents = io { renting.rent(items) }
-            ui { onRentFinished(documents) }
+            io { renting.returnRent(rentingData) }
+            ui { onReturned() }
         }
 
     class Factory(private val application: Application) : ViewModelProvider.Factory {

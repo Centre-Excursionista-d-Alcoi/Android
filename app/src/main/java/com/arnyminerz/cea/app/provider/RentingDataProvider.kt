@@ -5,15 +5,19 @@ import androidx.annotation.WorkerThread
 import com.arnyminerz.cea.app.data.ConstrainedInventoryItem
 import com.arnyminerz.cea.app.data.InventoryItem
 import com.arnyminerz.cea.app.data.RentingData
+import com.arnyminerz.cea.app.data.ReturnData
 import com.arnyminerz.cea.app.data.Section
 import com.arnyminerz.cea.app.data.companion.addSerializable
 import com.arnyminerz.cea.app.storage.Database
 import com.arnyminerz.cea.app.storage.entities.InventoryItemEntity
 import com.arnyminerz.cea.app.storage.entities.SectionEntity
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import java.util.Calendar
 
 class RentingDataProvider private constructor(context: Context) {
     companion object {
@@ -172,6 +176,30 @@ class RentingDataProvider private constructor(context: Context) {
             .await()
             .documents
             .map { RentingData.fromDocument(it) }
+
+    /**
+     * Notifies the server that an item has been returned.
+     * @author Arnau Mora
+     * @since 20220720
+     * @param rentingData The information about the renting to return.
+     */
+    @WorkerThread
+    suspend fun returnRent(
+        rentingData: RentingData,
+        userUid: String = Firebase.auth.currentUser!!.uid
+    ) =
+        firestore.collection("renting")
+            .document(rentingData.id)
+            .update(
+                mapOf(
+                    "returned" to mapOf(
+                        "returned_by" to userUid,
+                        "timestamp" to FieldValue.serverTimestamp(),
+                    )
+                )
+            )
+            .await()
+            .let { rentingData.copy(returned = ReturnData(userUid, Calendar.getInstance().time)) }
 
     /**
      * Deletes all stored data from the database, so it has to be loaded again from the server when

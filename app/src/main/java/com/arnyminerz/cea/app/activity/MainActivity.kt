@@ -67,6 +67,12 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private val returnContract = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        auth.currentUser?.uid?.let { rentingViewModel.loadUserRenting(it, true) }
+    }
+
     private val rentContract = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -217,7 +223,7 @@ class MainActivity : AppCompatActivity() {
                                                 NewsItem(article)
                                             }
                                         }
-                                    1 -> RentalPage(rentingViewModel, rentContract)
+                                    1 -> RentalPage(rentingViewModel, rentContract, returnContract)
                                     else -> Text("Page: $page")
                                 }
                             }

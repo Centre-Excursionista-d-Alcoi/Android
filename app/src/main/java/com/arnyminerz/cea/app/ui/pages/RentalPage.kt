@@ -24,7 +24,11 @@ import timber.log.Timber
 
 @ExperimentalMaterial3Api
 @Composable
-fun RentalPage(viewModel: RentingViewModel, rentContract: ActivityResultLauncher<Intent>) {
+fun RentalPage(
+    viewModel: RentingViewModel,
+    rentContract: ActivityResultLauncher<Intent>,
+    returnContract: ActivityResultLauncher<Intent>,
+) {
     val context = LocalContext.current
 
     Scaffold(
@@ -51,7 +55,7 @@ fun RentalPage(viewModel: RentingViewModel, rentContract: ActivityResultLauncher
                 .padding(paddingValues)
         ) {
             items(userRentingData ?: emptyList()) { item ->
-                ItemCard(item)
+                ItemCard(item, returnContract)
             }
         }
 
