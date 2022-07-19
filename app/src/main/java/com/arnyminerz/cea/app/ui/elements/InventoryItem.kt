@@ -1,27 +1,15 @@
 package com.arnyminerz.cea.app.ui.elements
 
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arnyminerz.cea.app.data.InventoryItem
 import com.google.firebase.Timestamp
@@ -56,7 +44,7 @@ fun InventoryItem(
             }
         }
 
-        val rentingLimit = item.amount.toInt() - rents.size
+        /*val rentingLimit = item.amount.toInt() - rents.size
 
         Row(
             modifier = Modifier
@@ -118,6 +106,6 @@ fun InventoryItem(
                     "", // TODO: Localize
                 )
             }
-        }
+        }*/
     }
 }

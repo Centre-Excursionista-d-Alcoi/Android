@@ -32,7 +32,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import coil.compose.AsyncImage
+import com.arnyminerz.cea.app.BuildConfig
 import com.arnyminerz.cea.app.R
+import timber.log.Timber
+import java.util.Locale
 
 @Composable
 fun AuthScreen(onLoginRequest: () -> Unit) {
@@ -84,6 +87,9 @@ fun AuthScreen(onLoginRequest: () -> Unit) {
                 .wrapContentSize(Alignment.BottomEnd)
                 .padding(8.dp)
         ) {
+            val languageTags = BuildConfig.TRANSLATION_ARRAY
+            Timber.i("There are ${languageTags.size} locales available.")
+
             Row(
                 modifier = Modifier
                     .clickable { expanded = true },
@@ -93,6 +99,7 @@ fun AuthScreen(onLoginRequest: () -> Unit) {
                     Icons.Rounded.Language,
                     contentDescription = stringResource(R.string.image_desc_language),
                     tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(end = 4.dp),
                 )
                 Text(
                     stringResource(R.string.language_label),
@@ -103,18 +110,21 @@ fun AuthScreen(onLoginRequest: () -> Unit) {
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                DropdownMenuItem(
-                    onClick = {
-                        val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags("en-US")
-                        AppCompatDelegate.setApplicationLocales(appLocale)
-                    },
-                    text = {
-                        Text("English")
-                    },
-                    colors = MenuDefaults.itemColors(
-                        textColor = MaterialTheme.colorScheme.onBackground,
-                    )
-                )
+                languageTags
+                    .map { Locale(it) }
+                    .forEach { locale ->
+                        DropdownMenuItem(
+                            onClick = {
+                                val appLocale: LocaleListCompat =
+                                    LocaleListCompat.forLanguageTags(locale.toLanguageTag())
+                                AppCompatDelegate.setApplicationLocales(appLocale)
+                            },
+                            text = { Text(locale.displayName.replaceFirstChar { it.uppercaseChar() }) },
+                            colors = MenuDefaults.itemColors(
+                                textColor = MaterialTheme.colorScheme.onBackground,
+                            )
+                        )
+                    }
             }
         }
     }
