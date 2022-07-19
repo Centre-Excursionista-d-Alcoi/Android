@@ -30,6 +30,12 @@
 
         <activity
             android:name=".activity.RentingActivity"
+            android:exported="true"
+            android:theme="@style/Theme.CEAApp" />
+
+        <activity
+            android:name=".activity.ReturnActivity"
+            android:theme="@style/Theme.CEAApp"
             android:exported="true" />
 
         <!-- For selecting custom language -->
