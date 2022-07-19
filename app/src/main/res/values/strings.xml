@@ -14,6 +14,8 @@
     <string name="image_desc_checkout">Checkout</string>
     <string name="image_desc_payment_method">Payment Method</string>
     <string name="image_desc_dates">Dates Range</string>
+    <string name="image_desc_return">Return rent</string>
+    <string name="image_desc_close">Close</string>
 
     <string name="main_menu_news">News</string>
     <string name="main_menu_rental">Rental</string>
@@ -62,4 +64,9 @@
     <string name="renting_confirm">Checkout %d items</string>
     <string name="renting_rent_missing">Fill all the fields</string>
     <string name="renting_rent">Confirm</string>
+
+    <string name="return_renting_title">Return Rent</string>
+    <string name="return_renting_card_title">Renting list</string>
+    <string name="return_renting_card_message">Please, make sure you have returned all the items before continuing.</string>
+    <string name="return_renting_confirm">Check this when you have confirmed that all the rent items have been returned.</string>
 </resources>
