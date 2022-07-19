@@ -54,7 +54,7 @@ fun ItemCard(
                 .fillMaxWidth()
         ) {
             Text(
-                inventoryItem.displayName,
+                inventoryItem.localizedDisplayName,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )

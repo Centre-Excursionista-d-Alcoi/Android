@@ -397,7 +397,7 @@ class RentingActivity : AppCompatActivity() {
                                 .padding(horizontal = 4.dp),
                         )
                         Text(
-                            item.displayName,
+                            item.localizedDisplayName,
                             modifier = Modifier.weight(1f),
                         )
                         Text(
