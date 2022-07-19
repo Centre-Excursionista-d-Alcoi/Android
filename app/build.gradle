@@ -26,6 +26,15 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        def locales = ["en"]
+        buildConfigField "String[]", "TRANSLATION_ARRAY", "new String[]{\"" + locales.join("\",\"") + "\"}"
+        resConfigs locales
+
+        // Export database schema
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas".toString())
+        }
     }
 
     // Configures the APK and AAB signing config
