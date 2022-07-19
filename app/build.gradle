@@ -168,6 +168,9 @@ dependencies {
     // Google Play Services
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
 
+    // KotlinX extensions
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
+
     // Accompanist
     implementation "com.google.accompanist:accompanist-pager:0.24.13-rc"
 
