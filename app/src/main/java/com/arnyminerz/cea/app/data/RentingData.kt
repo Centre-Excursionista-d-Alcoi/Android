@@ -1,5 +1,6 @@
 package com.arnyminerz.cea.app.data
 
+import android.os.Parcelable
 import com.arnyminerz.cea.app.data.companion.FirestoreDeserializer
 import com.arnyminerz.cea.app.data.companion.FirestoreSerializable
 import com.google.firebase.Timestamp
@@ -7,6 +8,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import kotlinx.parcelize.Parcelize
 import java.util.Date
 
 /**
@@ -23,6 +25,7 @@ import java.util.Date
  * @param endDate The date in which the item will stop being used.
  * @param returned If not null, notifies that the item has already been returned.
  */
+@Parcelize
 data class RentingData(
     val id: String,
     val timestamp: Date,
@@ -33,7 +36,7 @@ data class RentingData(
     val startDate: Date?,
     val endDate: Date?,
     val returned: ReturnData?,
-) : FirestoreSerializable {
+) : FirestoreSerializable, Parcelable {
     companion object : FirestoreDeserializer<RentingData>() {
         override suspend fun fromDocument(document: DocumentSnapshot): RentingData = RentingData(
             document.id,

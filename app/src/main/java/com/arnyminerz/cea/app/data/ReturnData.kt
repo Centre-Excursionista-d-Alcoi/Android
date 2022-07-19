@@ -1,11 +1,16 @@
 package com.arnyminerz.cea.app.data
 
+import android.os.Parcelable
+import com.arnyminerz.cea.app.data.companion.FirestoreSerializable
+import com.google.firebase.Timestamp
+import kotlinx.parcelize.Parcelize
 import java.util.Date
 
+@Parcelize
 data class ReturnData(
     val returnedByUid: String,
     val timestamp: Date,
-) {
+) : Parcelable, FirestoreSerializable {
     companion object {
         /**
          * Converts an object into [ReturnData].
@@ -19,8 +24,13 @@ data class ReturnData(
             obj as Map<*, *>
             return ReturnData(
                 obj["returned_by"] as String,
-                obj["timestamp"] as Date,
+                (obj["timestamp"] as Timestamp).toDate(),
             )
         }
     }
+
+    override suspend fun toFirestoreMap(): Map<String, *> = mapOf(
+        "returned_by" to returnedByUid,
+        "timestamp" to Timestamp(timestamp),
+    )
 }

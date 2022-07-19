@@ -1,5 +1,6 @@
 package com.arnyminerz.cea.app.data
 
+import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.annotation.WorkerThread
 import com.arnyminerz.cea.app.R
@@ -10,9 +11,11 @@ import com.arnyminerz.cea.app.data.companion.JsonSerializable
 import com.arnyminerz.cea.app.provider.TranslationProvider
 import com.arnyminerz.cea.app.utils.hoursDifference
 import com.google.firebase.firestore.DocumentSnapshot
+import kotlinx.parcelize.Parcelize
 import org.json.JSONObject
 import java.util.Date
 
+@Parcelize
 data class InventoryItem(
     val id: String,
     val displayName: String,
@@ -20,7 +23,7 @@ data class InventoryItem(
     val quantity: Long,
     val attributes: Map<@Attribute String, String>,
     val price: Price?,
-) {
+) : Parcelable {
     companion object : FirestoreDeserializer<InventoryItem>() {
         @WorkerThread
         @Throws(ClassCastException::class, NullPointerException::class)
@@ -69,7 +72,8 @@ data class InventoryItem(
         YEARLY(24 * 365, R.string.renting_item_price_yearly),
     }
 
-    data class Price(val amount: Float, val period: PricingPeriod) : JsonSerializable {
+    @Parcelize
+    data class Price(val amount: Float, val period: PricingPeriod) : JsonSerializable, Parcelable {
         /**
          * Computes the price that will cost renting the item with this price for the set dates.
          * @author Arnau Mora
