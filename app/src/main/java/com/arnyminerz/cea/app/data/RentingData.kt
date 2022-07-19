@@ -24,6 +24,7 @@ import java.util.Date
  * @param returned If not null, notifies that the item has already been returned.
  */
 data class RentingData(
+    val id: String,
     val timestamp: Date,
     val userUid: String,
     val item: InventoryItem,
@@ -35,6 +36,7 @@ data class RentingData(
 ) : FirestoreSerializable {
     companion object : FirestoreDeserializer<RentingData>() {
         override suspend fun fromDocument(document: DocumentSnapshot): RentingData = RentingData(
+            document.id,
             document.getDate("timestamp")!!,
             document.getString("user")!!,
             document.getDocumentReference("item")!!.let { InventoryItem.fromReference(it) },

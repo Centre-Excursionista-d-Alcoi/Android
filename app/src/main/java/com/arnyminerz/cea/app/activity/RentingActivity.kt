@@ -189,6 +189,7 @@ class RentingActivity : AppCompatActivity() {
                                             checkoutItems
                                                 .map { (item, amount) ->
                                                     RentingData(
+                                                        String(),
                                                         Calendar.getInstance().time,
                                                         user!!.uid,
                                                         item,
