@@ -7,6 +7,7 @@ import com.arnyminerz.cea.app.annotation.Attribute
 import com.arnyminerz.cea.app.data.companion.FirestoreDeserializer
 import com.arnyminerz.cea.app.data.companion.JsonDeserializer
 import com.arnyminerz.cea.app.data.companion.JsonSerializable
+import com.arnyminerz.cea.app.provider.TranslationProvider
 import com.arnyminerz.cea.app.utils.hoursDifference
 import com.google.firebase.firestore.DocumentSnapshot
 import org.json.JSONObject
@@ -56,6 +57,8 @@ data class InventoryItem(
                 }
             )
     }
+
+    val localizedDisplayName: String = TranslationProvider.getInstance().translate(displayName)
 
     enum class PricingPeriod(val hoursPerPeriod: Long, @StringRes val resourceString: Int) {
         NONE(0, R.string.renting_item_price_free),
